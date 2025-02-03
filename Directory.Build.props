@@ -1,0 +1,18 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<ImportDirectoryBuildProps>false</ImportDirectoryBuildProps>
+
+		<AnalysisLevel>latest</AnalysisLevel>
+		<AnalysisLevelSecurity>latest-recommended</AnalysisLevelSecurity>
+
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+		<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+
+		<!-- we should treat warnings as errors, but because we haven't enabled this at the start a lot of warning are present. -->
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	</PropertyGroup>
+</Project>

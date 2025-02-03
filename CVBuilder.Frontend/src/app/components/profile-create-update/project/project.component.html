@@ -1,0 +1,3 @@
+<app-project-overview *ngIf="showOverview" [projects]="projects" (editProjectCallBack)="handleForm($event)" (deleteProjectCallBack)="deleteProject($event)"></app-project-overview>
+<app-project-form *ngIf="showForm" [profileId]="profileId" [project]="selectedProject" (closeFormCallBack)="handleFormClose($event)"></app-project-form>
+

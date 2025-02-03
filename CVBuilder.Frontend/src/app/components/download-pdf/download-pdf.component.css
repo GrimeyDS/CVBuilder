@@ -1,0 +1,17 @@
+.field {
+  margin-bottom: 1rem;
+}
+
+p-button {
+  display: flex;
+  float: right;
+}
+
+p-button:disabled {
+    color: dimgray;
+    background-color: dimgray;
+}
+
+p-select {
+    margin-bottom: 25px;
+}

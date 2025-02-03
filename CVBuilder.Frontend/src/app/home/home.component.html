@@ -1,0 +1,81 @@
+<div class="column">
+
+  <div id="top-row">
+    <div id="filters" class="filters-container">
+      <!-- Name Input -->
+      <div class="filter-item">
+        <p-floatlabel variant="on">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-search"></p-inputIcon>
+            <input id="name" type="text" pInputText [(ngModel)]="filterName" (input)="applyFilter()" />
+          </p-iconField>
+          <label for="name">Name</label>
+        </p-floatlabel>
+      </div>
+
+      <!-- Year Input -->
+      <div class="filter-item">
+        <p-floatlabel variant="on">
+          <input type="text" id="yearsOfExperience" pInputText class="full-width" [(ngModel)]="filterYears" (input)="applyFilter()" />
+          <label for="yearsOfExperience">Years of experience</label>
+        </p-floatlabel>
+      </div>
+
+
+      <!-- Tag Input -->
+      <div class="filter-item">
+        <p-multiSelect [options]="tags"
+                       [(ngModel)]="selectedTags"
+                       optionLabel="title"
+                       placeholder="Select Tags" (onChange)="applyFilter()" />
+      </div>
+    </div>
+    <div class="button-container">
+      <p-button icon="pi pi-user-plus" [rounded]="true" [disabled]="loading" [text]="true" [raised]="true" severity="success" (click)="createNewProfile()" />
+    </div>
+  </div>
+
+  <div *ngIf="!loading">
+    <p-table [value]="filteredProfiles" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Tags</th>
+          <th> Years of experience</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-profile>
+        <tr (click)="showProfile(profile.id); $event.stopPropagation()">
+          <td><img [src]="profile.pictureUrl" alt="profile thumbnail" class="profile-thumbnail" /></td>
+          <td>{{ profile.lastName }} {{ profile.firstName }}</td>
+          <td><p-tag class="tags" *ngFor="let tag of profile.tags">{{tag.title}}</p-tag></td>
+          <td>{{ profile.yearsOfExperience }}</td>
+          <td>
+            <div class="button-container">
+              <p-button icon="pi pi-download" [rounded]="true" [text]="true" [raised]="true" severity="success" (click)="showPDFDownload(profile.id); $event.stopPropagation()" />
+              <p-button icon="pi pi-user-edit" [rounded]="true" [text]="true" [raised]="true" severity="warn" (click)="editProfile(profile.id); $event.stopPropagation()" />
+              <p-button icon="pi pi-user-minus" [rounded]="true" [text]="true" [raised]="true" severity="danger" (click)="confirmDelete(profile); $event.stopPropagation()" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <div *ngIf="loading" class="spinner-container">
+    <p-progress-spinner strokeWidth="5" fill="transparent" [style]="{ width: '50px', height: '50px' }" />
+  </div>
+
+  <app-profile-details [(visible)]="isProfileDetailsVisible" [profileId]="selectedProfileId" (click)="$event.stopPropagation()"></app-profile-details>
+  <app-download-pdf [(visible)]="isPDFDownloadVisible" [profileId]="selectedProfileId" (click)="$event.stopPropagation()"></app-download-pdf>
+  <app-profile-create-update [(visible)]="isCreateEditProfileVisible" [profileId]="selectedProfileId" (profileChangeCallBack)="updateList($event)"></app-profile-create-update>
+
+  <div class="row wrap gap-1 space-between">
+
+  </div>
+</div>
+
+<p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
+<p-confirmDialog />

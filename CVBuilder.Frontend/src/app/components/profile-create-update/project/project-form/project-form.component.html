@@ -1,0 +1,89 @@
+
+<p-button icon="pi pi-arrow-left" [rounded]="true" [text]="true"  (click)="onCancel()" />
+
+
+<form [formGroup]="form" class="form-container">
+  <div class="columns">
+    <!-- Left Column -->
+    <div class="column left-column">
+      <div class="image-container">
+        <img [src]="projectImageUrl"
+             alt="Project Picture"
+             class="picture" />
+        <p-fileUpload name="file"
+                      mode="basic"
+                      chooseIcon="pi pi-upload"
+                      accept="image/*"
+                      maxFileSize="1000000"
+                      (onSelect)="onFileSelect($event)"
+                      [auto]="true"
+                      chooseLabel="Change">
+        </p-fileUpload>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="column right-column">
+      <div class="field">
+        <label for="title">Title</label>
+        <input id="title" type="text" pInputText formControlName="title" />
+      </div>
+
+      <div class="field">
+        <label for="customer">Customer</label>
+        <input id="customer" type="text" pInputText formControlName="customer" />
+      </div>
+
+      <div class="field">
+        <label for="startDate">Start Date</label>
+        <p-datepicker id="startDate"
+                      appendTo="body"
+                      size="small"
+                      formControlName="startDate"
+                      dateFormat="dd.mm.yy"
+                      [iconDisplay]="'input'"
+                      [showIcon]="true">
+        </p-datepicker>
+      </div>
+      <div class="field">
+        <label for="endDate">End Date</label>
+        <p-datepicker id="endDate"
+                      appendTo="body"
+                      size="small"
+                      formControlName="endDate"
+                      dateFormat="dd.mm.yy"
+                      [iconDisplay]="'input'"
+                      [showIcon]="true">
+        </p-datepicker>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description Field -->
+  <div class="field full-width">
+    <label for="description">Description</label>
+    <textarea id="description"
+              pTextarea
+              rows="5"
+              cols="72"
+              [autoResize]="true"
+              formControlName="description">
+    </textarea>
+  </div>
+
+  <div class="field full-width" *ngIf="project.id">
+    <label for="tags">Tags</label>
+    <app-tags-form [tags]="project.tags" [id]="project.id" [type]="type"></app-tags-form>
+  </div>
+
+  <div class="field full-width" *ngIf="!project.id">
+    <label for="tags">Tags are available when project has been created.</label>
+  </div>
+
+  <app-feedback-messages [error]="error"></app-feedback-messages>
+</form>
+
+<div class="button-container">
+  <p-button icon="pi pi-check" [rounded]="true" [text]="true" label="Save" [raised]="true" severity="success" (click)="onSave()" />
+  <p-button icon="pi pi-times" [rounded]="true" [text]="true" label="Cancel" [raised]="true" severity="danger" (click)="onCancel()" />
+</div>

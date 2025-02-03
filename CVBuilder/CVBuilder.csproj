@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<UserSecretsId>c996b4b0-287b-47cc-a189-8dce96a5e9aa</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+		<PackageReference Include="MediatR" Version="12.4.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Identity.Web" Version="3.6.2" />
+		<PackageReference Include="PDFsharp" Version="6.1.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="..\.dockerignore">
+			<Link>.dockerignore</Link>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CVBuilder.Experiences\CVBuilder.Experiences.csproj" />
+		<ProjectReference Include="..\CVBuilder.Files\CVBuilder.Files.csproj" />
+		<ProjectReference Include="..\CVBuilder.Pdf\CVBuilder.Pdf.csproj" />
+		<ProjectReference Include="..\CVBuilder.Projects\CVBuilder.Projects.csproj" />
+		<ProjectReference Include="..\CVBuilder.Tags\CVBuilder.Tags.csproj" />
+		<ProjectReference Include="..\CVBuilder.Users\CVBuilder.Users.csproj" />
+		<ProjectReference Include="..\CVBuilder.Profiles\CVBuilder.Profiles.csproj" />
+	</ItemGroup>
+
+</Project>

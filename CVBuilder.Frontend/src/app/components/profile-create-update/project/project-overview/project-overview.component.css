@@ -1,0 +1,15 @@
+p-button {
+  margin-bottom: 10px;
+}
+
+p-table td:nth-child(1) {
+  width: 200px;
+}
+
+p-table td:nth-child(2) {
+  width: 200px;
+}
+
+p-table td:nth-child(3) {
+  width: 100px;
+}

@@ -1,0 +1,25 @@
+<p-dialog header="Download PDF"
+          [(visible)]="visible"
+          [modal]="true"
+          [resizable]="false"
+          [draggable]="false"
+          (onHide)="close()">
+
+  <div class="field">
+    <p-select id="template"
+              [options]="templates"
+              [(ngModel)]="selectedTemplate"
+              optionLabel="name"
+              placeholder="Select a template" />
+
+    <br/>
+    <p-button label="Download"
+              icon="pi pi-download"
+              severity="success"
+              [disabled]="!selectedTemplate"
+              [loading]="loading"
+              [rounded]="true"
+              [raised]="true"
+              (click)="downloadPDF()"></p-button>
+  </div>
+</p-dialog>

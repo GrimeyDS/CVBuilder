@@ -1,0 +1,6 @@
+<div class="container">
+
+
+  <app-experience-overview *ngIf="showOverview" [experience]="experience" (editExperienceCallBack)="handleForm($event)" (deleteExperienceCallBack)="deleteExperience($event)"></app-experience-overview>
+  <app-experience-form *ngIf="showForm" [type]="experienceType" [profileId]="profileId" [experience]="selectedExperience" (closeFormCallBack)="handleFormClose($event)"></app-experience-form>
+</div>

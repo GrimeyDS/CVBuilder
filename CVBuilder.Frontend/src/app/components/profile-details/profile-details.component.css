@@ -1,0 +1,70 @@
+.profile-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.details {
+  flex-grow: 1;
+}
+
+.tagsContainer, .experiences, .projects {
+  margin-top: 1rem;
+}
+
+.tagsContainer {
+    display: block;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+p-tag {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+h2 {
+    margin-bottom: 5px;
+}
+
+
+h4, h3 {
+  color: #54b484;
+  margin-bottom: 5px;
+}
+
+li {
+    margin-bottom: 15px;
+}
+
+.tag-label {
+    margin-bottom: 2px;
+}
+
+.experience-li {
+  position: relative;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.experience-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}

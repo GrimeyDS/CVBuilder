@@ -1,0 +1,27 @@
+<div class="button-container">
+  <p-button icon="pi pi-plus-circle" [rounded]="true" [text]="true" label="Add Experience" [raised]="true" severity="success" (click)="toggleToForm(); $event.stopPropagation()" />
+</div>
+
+<div>
+  <p-table [value]="experience" [tableStyle]="{ 'max-width': '100rem' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-experience>
+      <tr>
+        <td>{{ experience.title }}</td>
+        <td>{{ experience.description }}</td>
+        <td>
+          <p-button icon="pi pi-file-edit" [rounded]="true" [text]="true" [raised]="true" severity="warn" (click)="editExperience(experience); $event.stopPropagation()" />
+          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" [raised]="true" severity="danger" (click)="confirmDelete(experience); $event.stopPropagation()" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+

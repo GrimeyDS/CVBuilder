@@ -1,0 +1,71 @@
+
+  <form [formGroup]="form" class="form-container">
+    <div class="columns">
+      <!-- Left Column -->
+      <div class="column left-column">
+        <div class="image-container">
+          <img [src]="profileImageUrl"
+               alt="Profile Picture"
+               class="picture" />
+          <p-fileUpload name="file"
+                        mode="basic"
+                        chooseIcon="pi pi-upload"
+                        accept="image/*"
+                        maxFileSize="1000000"
+                        (onSelect)="onFileSelect($event)"
+                        [auto]="true"
+                        chooseLabel="Change">
+          </p-fileUpload>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="column right-column">
+        <div class="field">
+          <label for="firstName">First Name</label>
+          <input id="firstName" type="text" pInputText formControlName="firstName" />
+        </div>
+
+        <div class="field">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" type="text" pInputText formControlName="lastName" />
+        </div>
+
+        <div class="field">
+          <label for="currentRole">Current Role</label>
+          <input id="currentRole" type="text" pInputText formControlName="currentRole" />
+        </div>
+
+        <div class="field">
+          <label for="birthDate">Birthdate</label>
+          <p-datepicker id="birthDate"
+                        appendTo="body"
+                        size="small"
+                        formControlName="birthDate"
+                        dateFormat="dd.mm.yy"
+                        [iconDisplay]="'input'"
+                        [showIcon]="true">
+          </p-datepicker>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Field -->
+    <div class="field full-width">
+      <label for="description">Description</label>
+      <textarea id="description"
+                pTextarea
+                rows="5"
+                cols="72"
+                [autoResize]="false"
+                formControlName="description">
+    </textarea>
+    </div>
+
+    <app-feedback-messages [error]="error"></app-feedback-messages>
+
+  </form>
+
+  <div class="button-container">
+    <p-button icon="pi pi-check" [rounded]="true" [text]="true" label="Save" [raised]="true" severity="success" (click)="onSave()" [loading]="loading" />
+  </div>

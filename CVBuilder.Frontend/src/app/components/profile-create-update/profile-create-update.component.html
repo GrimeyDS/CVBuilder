@@ -1,0 +1,48 @@
+<p-dialog header="{{ header }}"
+          [(visible)]="visible"
+          [modal]="true"
+          [closable]="true"
+          [style]="{ width: '50vw', height: '100vh' }"
+          (onHide)="close()">
+  <p-steps [model]="steps"
+           [(activeIndex)]="activeStepIndex"
+           [readonly]="true"
+           styleClass="steps-custom"></p-steps>
+
+  <div class="step-content">
+    <p-card>
+        <!-- Step 1: Personal Info -->
+        <ng-container *ngIf="activeStepIndex === 0">
+          <app-personal-info-form [profile]="profile" (profileChangeCallBack)="updateProfile($event)"></app-personal-info-form>
+        </ng-container>
+
+        <!-- Step 2: Tags -->
+        <ng-container *ngIf="activeStepIndex === 1">
+          <app-tags-form [tags]="profile.tags" [id]="profile.id" [type]="type"></app-tags-form>
+        </ng-container>
+
+        <!-- Step 3: Education -->
+        <ng-container *ngIf="activeStepIndex === 2">
+          <app-experience [experience]="profile.education" [experienceType]="experienceType" [profileId]="profile.id" (deleteExperienceCallBack)="deleteExperience($event)"></app-experience>
+        </ng-container>
+
+        <!-- Step 4: Employment -->
+        <ng-container *ngIf="activeStepIndex === 3">
+          <app-experience [experience]="profile.employment" [experienceType]="experienceType" [profileId]="profile.id" (deleteExperienceCallBack)="deleteExperience($event)"></app-experience>
+        </ng-container>
+
+        <!-- Step 5: Projects -->
+        <ng-container *ngIf="activeStepIndex === 4">
+          <app-project [projects]="profile.projects" [profileId]="profile.id" (deleteProjectCallBack)="deleteProject($event)"></app-project>
+        </ng-container>
+    </p-card>
+  </div>
+
+
+  <ng-template #footer>
+    <div class="button-container">
+      <p-button icon="pi pi-angle-left" [rounded]="true" [text]="true" [raised]="true" severity="success" (click)="prevStep()" [disabled]="activeStepIndex === 0 " />
+      <p-button icon="pi pi-angle-right" [rounded]="true" [text]="true" [raised]="true" severity="success" (click)="nextStep()" [disabled]="activeStepIndex === steps.length - 1 || !profile.id" />
+    </div>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,17 @@
+p-button {
+    margin-right: 10px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: start;
+  align-content: center;
+}
+
+.step-content {
+    margin-top: 30px;
+}
+
+p-dialog {
+    height: max-content;
+}

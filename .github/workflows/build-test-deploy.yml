@@ -1,0 +1,287 @@
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore: [ Infra/** ]
+  pull_request:
+    branches: [ main ]
+    paths-ignore: [ Infra/** ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  node-version: 22
+  dotnet-version: 8.0.x
+  project-frontend: CVBuilder.Frontend
+  project-frontend-lowercase: cvbuilder.frontend
+  project-backend: CVBuilder
+  artifact-name-backend: backend-build
+  artifact-name-frontend: frontend-build
+  artifact-name-migrations: db-migrations
+  
+jobs:
+  build-backend: 
+    name: Backend | Build, Test and Artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup
+        uses: actions/setup-dotnet@v4
+        with: 
+          dotnet-version: ${{ env.dotnet-version }}
+      
+      - name: Install dependencies
+        run: dotnet restore
+        
+      - name: Build project
+        run: dotnet build -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet test -c Release --no-build --verbosity normal
+      
+      - name: Publish
+        run: dotnet publish -c Release --no-build 
+
+      - name: Prepare artifact
+        run: mkdir -p ./artifact && cp -r ${{ env.project-backend }}/**/Release/**/publish/** ./artifact/
+      
+      - name: Upload build to artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifact-name-backend }}
+          path: ./artifact/**
+
+  build-frontend:
+    name: Frontend | Build and Artifact
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.node-version }}
+
+      - name: Install dependencies
+        run: npm i
+        working-directory: ${{ env.project-frontend }}
+
+      - name: Build project
+        run: npm run build-prod
+        working-directory: ${{ env.project-frontend }}
+
+      - name: Prepare artifact
+        run: | 
+          mkdir -p ./artifact
+          cp -r ${{ env.project-frontend }}**/dist/${{ env.project-frontend-lowercase }}/browser/** ./artifact/
+
+      - name: Upload build to artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifact-name-frontend }}
+          path: ./artifact/**
+
+  generate-migration-script: 
+    name: Migrations | Generate and Artifact
+    runs-on: ubuntu-latest
+    env: 
+      scripts-location: ./scripts
+      merged-file: ./artifact/migration.sql
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.dotnet-version }}
+
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Generate SQL migration scripts
+        run: |
+          mkdir -p ${{ env.scripts-location }}
+          find . -name "*DbContext.cs" | while read dbContextFile; do
+            dbContextName=$(basename "$dbContextFile" .cs)
+            echo "Generating migration script for '$dbContextName'"
+            dotnet ef migrations script --idempotent --startup-project ${{ env.project-backend }} --context "$dbContextName" --output "${{ env.scripts-location }}/${dbContextName,,}Migrations.sql"
+          done
+        shell: bash
+
+      - name: Combine SQL migration scripts
+        run: |
+            new_file="${{ env.merged-file }}"
+            out_file="$new_file"
+            
+            if [ -f "$out_file" ]; then
+            rm -f "$out_file"
+            fi
+            
+            files=$(find ${{ env.scripts-location }} -name "*.sql" | sort)
+            
+            mkdir -p $(dirname "$out_file")
+            touch "$out_file"
+            
+            for file in $files; do
+              echo "Appending file $file to $out_file..."
+              
+              content=$(sed '1 s/^.*$/IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'\''[__EFMigrationsHistory]'\'') AND type in (N'\''U'\''))/' $file)
+              echo "----------------------------------------------------------------------------------------------------------------------------------------------------------------" >> "$out_file"
+              echo "--      $file" >> "$out_file"
+              echo "----------------------------------------------------------------------------------------------------------------------------------------------------------------" >> "$out_file"
+              echo "$content" >> "$out_file"
+            done
+            
+            echo "Completed file $out_file"
+        shell: bash
+
+      - name: Upload scripts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifact-name-migrations }}
+          path: ${{ env.merged-file }}
+
+  vulnerability-scan:
+    name: All | Scan Vulnerabilities
+    runs-on: ubuntu-latest
+    needs: 
+      - build-backend 
+      - build-frontend
+      - generate-migration-script
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Manual Trivy Setup
+        uses: aquasecurity/setup-trivy@v0.2.0
+        with:
+          cache: true
+          version: v0.56.1
+
+      - name: Run Trivy vulnerability scanner Fails on vulns
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'table'
+          scan-ref: .
+          severity: 'HIGH,CRITICAL'
+          ignore-unfixed: true
+          exit-code: 1
+          skip-setup-trivy: true
+
+  deploy-backend:
+    name: Backend | Deploy
+    runs-on: ubuntu-latest
+    needs: vulnerability-scan
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    env:
+      name: app-cvbuilderapi-prod-weu-001
+      path: ./build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.artifact-name-backend }}
+          path: ${{ env.path }}
+      
+      - name: Add sql connection string to appsettings.json
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '${{env.path}}/appsettings.json'
+        env:
+          ConnectionStrings.DefaultConnection: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          StorageAccount.ConnectionString: ${{ secrets.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING }}
+          AzureAd.TenantId: ${{ secrets.AZURE_TENANT_ID }}
+          AzureAd.ClientId: ${{ secrets.AZURE_CLIENT_ID }}
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 'Deploy build to Azure'
+        uses: azure/webapps-deploy@v3
+        with: 
+          app-name: ${{ env.name }}
+          package: ${{ env.path }}
+
+  deploy-frontend:
+    name: Frontend | Deploy
+    runs-on: ubuntu-latest
+    needs: vulnerability-scan
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    env:
+      name: app-cvbuilderclient-prod-weu-001
+      path: ./build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.artifact-name-frontend }}
+          path: ${{ env.path }}
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  
+      - name: 'Deploy build to Azure'
+        uses: azure/webapps-deploy@v3
+        with: 
+          app-name: ${{ env.name }}
+          package: ${{ env.path }}
+
+  deploy-migration-script:
+    name: Migrations | Deploy
+    runs-on: ubuntu-latest
+    needs: vulnerability-scan
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    env:
+      path: ./scripts
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download miragtions artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.artifact-name-migrations }}
+          path: ${{ env.path }}
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy migrations
+        uses: azure/sql-action@v2.3
+        with:        
+          connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          path: ${{ env.path }}/*.sql

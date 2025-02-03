@@ -1,0 +1,108 @@
+<p-dialog [modal]="true"
+          [(visible)]="visible"
+          [style]="{ width: '50rem', height: '100vh' }"
+          [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+          [maximizable]="true"
+          (onHide)="close()">
+  <ng-template #header>
+    <div class="button-container" >
+      <p-button icon="pi pi-download" [rounded]="true" [disabled]="loading" [text]="true" [raised]="true" severity="success" (click)="showPDFDownload(); $event.stopPropagation()" />
+      <p-button icon="pi pi-user-edit" [rounded]="true" [disabled]="loading" [text]="true" [raised]="true" severity="warn" (click)="openUpdateProfileModal(); $event.stopPropagation()" />
+    </div>
+  </ng-template>
+ 
+    <ng-template pTemplate="content">
+      <div class="profile-overview">
+
+        <div *ngIf="loading" class="spinner-container">
+          <p-progress-spinner strokeWidth="5" fill="transparent" [style]="{ width: '50px', height: '50px' }" />
+        </div>
+
+        <div *ngIf="!loading">
+          <p-card>
+            <div class="header">
+              <img [src]="profile.pictureUrl"
+                   alt="Profile Picture"
+                   class="picture" />
+              <div class="details">
+                <h2>{{ profile.firstName }} {{ profile.lastName }}</h2>
+                <p><strong>{{ profile.currentRole }}</strong> </p>
+                <p><strong>Years of Experience:</strong> {{ profile.yearsOfExperience }}</p>
+                <p><strong>Date of Birth:</strong> {{ profile.birthDate | date }}</p>
+                <p><strong>Description:</strong></p>
+                <p>{{ profile.description }}</p>
+              </div>
+            </div>
+          </p-card>
+          <div class="tagsContainer">
+            <p-card header="Tags">
+              <p-tag class="tags" *ngFor="let tag of profile.tags">{{tag.title}}</p-tag>
+            </p-card>
+          </div>
+          <div class="experiences">
+            <p-card header="Education">
+              <ul style="list-style: none; padding: 0;">
+                <li *ngFor="let education of profile.education" class="experience-li">
+                  <div class="experience-div">
+                    <h3>{{ education.title }}</h3>
+                    <p>
+                      {{ education.startDate | date }} -
+                      {{ education.endDate ? (education.endDate | date) : 'Present' }}
+                    </p>
+                  </div>
+                  <p style="margin: 0.5rem 0 0;">{{ education.description }}</p>
+                </li>
+              </ul>
+            </p-card>
+          </div>
+          <div class="experiences">
+            <p-card header="Employment">
+              <ul style="list-style: none; padding: 0;">
+                <li *ngFor="let employment of profile.employment" class="experience-li">
+                  <div class="experience-div">
+                    <h3>{{ employment.title }}</h3>
+                    <p>
+                      {{ employment.startDate | date }} -
+                      {{ employment.endDate ? (employment.endDate | date) : 'Present' }}
+                    </p>
+                  </div>
+                  <p style="margin: 0.5rem 0 0;">{{ employment.description }}</p>
+                </li>
+              </ul>
+            </p-card>
+          </div>
+          <div class="projects">
+            <p-card header="Projects">
+              <ul>
+                <li *ngFor="let project of profile.projects">
+                  <div class="header">
+                    <img [src]="project.pictureUrl"
+                         alt="Project Picture"
+                         class="picture" />
+                    <div class="details">
+                      <h3>{{ project.title }}</h3>
+                      <p><strong>Customer: </strong> {{ project.customer }}</p>
+                      <p>
+                        <strong>Duration:</strong>
+                        {{ project.startDate | date }} -
+                        {{ project.endDate ? (project.endDate | date) : 'Present' }}
+                      </p>
+                      <p><strong>Description: </strong></p>
+                      <p> {{ project.description }}</p>
+                      <br />
+                      <p class="tag-label"><strong>Tags:</strong></p>
+                      <p-tag class="tags" *ngFor="let tag of project.tags">{{tag.title}}</p-tag>
+                    </div>
+                  </div>
+                  <p-divider />
+                </li>
+              </ul>
+            </p-card>
+          </div>
+        </div>
+      </div>
+</ng-template>
+</p-dialog>
+
+<app-profile-create-update [(visible)]="isUpdateModalVisible" [profileId]="profileId"></app-profile-create-update>
+<app-download-pdf [(visible)]="isPDFDownloadVisible" [profileId]="profileId" (click)="$event.stopPropagation()"></app-download-pdf>

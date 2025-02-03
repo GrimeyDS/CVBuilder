@@ -1,0 +1,9 @@
+<div class="message" *ngIf="errorMessages.length">
+  <p-message icon="pi pi-times-circle"
+             variant="outlined"
+             severity="error"
+             styleClass="h-full"
+             size="small">
+    <span *ngFor="let message of errorMessages">{{ message }} <br /></span>
+  </p-message>
+</div>

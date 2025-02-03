@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CVBuilder.Shared": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "AZURE_STORAGE_CONNECTION_STRING": "DefaultEndpointsProtocol=https;AccountName=oncorecvbuilder;AccountKey=5rSZq6pzw9BrXp/dcrOXs+t6/PwDl3YThEriuqJoHFnroyXQzuOe24d1hzR88//817z+oH30VVu7+AStf94B0Q==;EndpointSuffix=core.windows.net;"
+      }
+    }
+  }
+}

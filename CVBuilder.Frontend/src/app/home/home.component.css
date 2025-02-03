@@ -1,0 +1,59 @@
+.profile-thumbnail {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+td {
+  align-content: center;
+}
+
+p-table td img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+p-table td:nth-child(2) {
+  width: 200px; 
+}
+
+p-table td:nth-child(4) {
+  width: 150px;
+}
+
+p-table td:nth-child(5) {
+  width: 100px;
+}
+
+#top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.filters-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; 
+  flex-grow: 0; 
+}
+
+.filter-item {
+  flex: 0; 
+}
+
+.full-width { 
+  box-sizing: border-box; 
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+td:hover {
+  cursor: pointer;
+}

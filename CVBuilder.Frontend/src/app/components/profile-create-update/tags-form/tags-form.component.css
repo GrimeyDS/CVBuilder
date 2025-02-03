@@ -1,0 +1,33 @@
+.container {
+   min-height: 200px;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.autocomplete {
+  flex: 1;
+  margin-right: 10px;
+  width: 500px;
+}
+
+p-button {
+  flex: 0 0 auto;
+  width: 200px;
+}
+
+.message {
+  margin-bottom: 10px;
+  max-width: fit-content;
+}
+
+
+::ng-deep .tags:hover {
+  background: darkred;
+  cursor: pointer;
+}

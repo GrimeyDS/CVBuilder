@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="input-container">
+    <p-floatlabel variant="on">
+      <p-autocomplete inputId="inputLabel" size="small" [dropdown]="true" [(ngModel)]="selectedTag" [suggestions]="filteredTags" class="autocomplete" [inputStyle]="{'width':'500px'}" (completeMethod)="filterTags($event)" optionLabel="title" (onSelect)="addTag()" />
+      <label for="inputLabel">Tag Title</label>
+    </p-floatlabel>
+      <p-button type="submit"
+                icon="pi pi-plus"
+                [rounded]="true"
+                [text]="true"
+                label="Add new tag"
+                [raised]="true"
+                class="button"
+                (click)="addTag()"
+                [loading]="loading">
+      </p-button>
+  </div>
+
+  <div>
+    <p-tag styleClass="tags" *ngFor="let tag of tags" (click)="removeTag(tag)" icon="pi pi-times-circle">{{tag.title}}</p-tag>
+  </div>
+
+  <app-feedback-messages [error]="error"></app-feedback-messages>
+</div>

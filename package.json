@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "primeng": "^17.18.12"
+  },
+  "scripts": {
+    "migrate": "powershell ./migration-script.ps1"
+  }
+}

@@ -1,0 +1,49 @@
+
+<form [formGroup]="form" class="form-container">
+
+  <div class="field full-width">
+    <label for="title">Title</label>
+    <input id="title" type="text" pInputText formControlName="title" />
+  </div>
+
+  <div class="field full-width">
+    <label for="startDate">Start Date</label>
+    <p-datepicker id="startDate"
+                  appendTo="body"
+                  size="small"
+                  formControlName="startDate"
+                  dateFormat="dd.mm.yy"
+                  [iconDisplay]="'input'"
+                  [showIcon]="true">
+    </p-datepicker>
+  </div>
+  <div class="field full-width">
+    <label for="endDate">End Date</label>
+    <p-datepicker id="endDate"
+                  appendTo="body"
+                  size="small"
+                  formControlName="endDate"
+                  dateFormat="dd.mm.yy"
+                  [iconDisplay]="'input'"
+                  [showIcon]="true">
+    </p-datepicker>
+  </div>
+
+  <div class="field full-width">
+    <label for="description">Description</label>
+    <textarea id="description"
+              pTextarea
+              rows="5"
+              cols="72"
+              [autoResize]="true"
+              formControlName="description">
+    </textarea>
+  </div>
+
+  <app-feedback-messages [error]="error"></app-feedback-messages>
+</form>
+
+<div class="button-container">
+  <p-button icon="pi pi-check" [rounded]="true" [text]="true" label="Save" [raised]="true" severity="success" (click)="onSave()" />
+  <p-button icon="pi pi-times" [rounded]="true" [text]="true" label="Cancel" [raised]="true" severity="danger" (click)="onCancel()" />
+</div>

@@ -1,0 +1,25 @@
+<div class="button-container">
+  <p-button icon="pi pi-plus-circle" [rounded]="true" [text]="true" label="Add Project" [raised]="true" severity="success" (click)="toggleToForm(); $event.stopPropagation()" />
+</div>
+
+<div>
+  <p-table [value]="projects" [tableStyle]="{ 'max-width': '100rem' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Title</th>
+        <th>Customer</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-project>
+      <tr>
+        <td>{{ project.title }}</td>
+        <td>{{ project.customer }}</td>
+        <td>
+          <p-button icon="pi pi-file-edit" [rounded]="true" [text]="true" [raised]="true" severity="warn" (click)="editProject(project); $event.stopPropagation()" />
+          <p-button icon="pi pi-trash" [rounded]="true" [text]="true" [raised]="true" severity="danger" (click)="confirmDelete(project); $event.stopPropagation()" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
